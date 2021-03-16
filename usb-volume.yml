@@ -1,0 +1,14 @@
+---
+
+- name: Usb volume
+  hosts: plex
+
+  tasks:
+  - name: Mount up device by label (NTFS)
+    become: yes
+    mount:
+      path: /mnt/{{ usb_volume_label }}
+      src: LABEL={{ usb_volume_label }}
+      fstype: ntfs
+      opts: defaults,auto,users,rw,nofail,umask=000
+      state: mounted

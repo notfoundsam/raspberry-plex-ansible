@@ -1,0 +1,4 @@
+---
+ansible_user: pi
+ansible_ssh_private_key_file: ~/.ssh/raspberry
+usb_volume_label: usb_750g

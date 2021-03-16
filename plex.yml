@@ -1,0 +1,32 @@
+---
+
+- name: Plex
+  hosts: plex
+
+  tasks:
+  - name: Install apt-transport-https
+    become: yes
+    apt:
+      name: apt-transport-https
+      update_cache: yes
+      state: present
+  
+  - name: Add key
+    become: yes
+    apt_key:
+      url: "https://downloads.plex.tv/plex-keys/PlexSign.key"
+      state: present
+  
+  - name: Create plex list
+    become: yes
+    copy:
+      dest: "/etc/apt/sources.list.d/plexmediaserver.list"
+      content: |
+        deb https://downloads.plex.tv/repo/deb public main
+
+  - name: Install plex
+    become: yes
+    apt:
+      name: plexmediaserver
+      update_cache: yes
+      state: present
