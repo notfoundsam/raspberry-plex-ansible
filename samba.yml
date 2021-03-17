@@ -1,0 +1,26 @@
+---
+
+- name: Samba
+  hosts: plex
+
+  tasks:
+  - name: Install Samba and components
+    become: yes
+    apt:
+      pkg:
+        - samba
+        - samba-common-bin
+        - smbclient
+        - cifs-utils 
+      state: present
+      update_cache: true
+  - name: Insert/Update "Match User" configuration block in /etc/ssh/sshd_config
+    become: yes
+    blockinfile:
+      path: /etc/samba/smb.conf
+      block: |
+        [share]
+            path = /mnt/{{ usb_volume_label }}
+            read only = no
+            public = yes
+            writable = yes

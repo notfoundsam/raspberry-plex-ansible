@@ -30,3 +30,12 @@
       name: plexmediaserver
       update_cache: yes
       state: present
+
+  - name: Set pi hostname
+    become: yes
+    hostname:
+      name: "{{ host_name }}"
+  
+  - name: Reboot
+    become: yes
+    reboot:
