@@ -10,11 +10,11 @@
       pkg:
         - samba
         - samba-common-bin
-        - smbclient
         - cifs-utils 
       state: present
       update_cache: true
-  - name: Insert/Update "Match User" configuration block in /etc/ssh/sshd_config
+  
+  - name: Set up samba configuration
     become: yes
     blockinfile:
       path: /etc/samba/smb.conf

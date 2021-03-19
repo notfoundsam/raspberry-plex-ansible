@@ -1,0 +1,58 @@
+---
+
+- name: Transmission
+  hosts: plex
+
+  tasks:
+  - name: Install transmission and a firewall
+    become: yes
+    apt:
+      pkg:
+        - transmission-daemon
+        - ufw
+      update_cache: yes
+      state: present
+  
+  - name: Temporary stop transmission
+    become: yes
+    systemd:
+      state: stopped
+      name: transmission-daemon  
+  
+  - name: Change transmission username
+    become: yes
+    command: >
+      sed -i -e 's/"rpc-username": ".\+"/"rpc-username": "{{ transmission_username }}"/g' /etc/transmission-daemon/settings.json 
+  
+  - name: Change transmission password
+    become: yes
+    command: >
+      sed -i -e 's/"rpc-password": ".\+"/"rpc-password": "{{ transmission_password }}"/g' /etc/transmission-daemon/settings.json  
+
+  - name: Change transmission whitelist
+    become: yes
+    command: >
+      sed -i -e 's/"rpc-whitelist": ".\+"/"rpc-whitelist": "{{ transmission_white_list }}"/g' /etc/transmission-daemon/settings.json
+  
+  - name: Change transmission download dirrectory
+    become: yes
+    command: >
+      sed -i -e 's/"download-dir": ".\+"/"download-dir": "\/mnt\/{{ usb_volume_label }}\/downloads"/g' /etc/transmission-daemon/settings.json
+  
+  - name: Create a download directory
+    file:
+      path: /mnt/{{ usb_volume_label }}/downloads
+      state: directory
+
+  - name: Allow access to peer listening port
+    become: yes
+    ufw:
+      rule: allow
+      port: '51413'
+      proto: tcp
+
+  - name: Start transmission
+    become: yes
+    systemd:
+      state: started
+      name: transmission-daemon
